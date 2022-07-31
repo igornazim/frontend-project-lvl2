@@ -12,10 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - env: 
-          TESTS_SECRET: ${{ CODE_CLIMATE }}
         with:
           node-version: '16.x'
           cache: 'npm'
       - run: make install
       - run: make lint
+      - run: make test
+        - name: Test & publish code coverage
+            https://github.com/paambaati/codeclimate-action
+          uses: paambaati/codeclimate-action@v3
+          env:
+            TESTS_SECRET: ${{ CODE_CLIMATE }}
+          with:
+            coverageCommand: make test-coverage
+            debug: true
