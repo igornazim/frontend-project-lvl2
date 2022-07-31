@@ -4,8 +4,14 @@ install:
 install-deps:
 	npm ci
 
-brain-games:
+gendiff:
 	node bin/gendiff.js
+
+test:
+	npm test
+
+test-coverage:
+	npm test -- --coverage
 
 lint:
 	npx eslint .

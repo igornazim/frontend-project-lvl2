@@ -17,17 +17,19 @@ const genDiff = (firstFilePath, secondFilePath) => {
   const keys2 = Object.keys(secondParsedFile);
   const unionKeys = _.union(keys1, keys2).sort();
   const diff = unionKeys.reduce((acc, key) => {
+    const check1 = Object.hasOwn(firstParsedFile, key);
+    const check2 = Object.hasOwn(secondParsedFile, key);
     if (firstParsedFile[key] === secondParsedFile[key]) {
-      return `${acc}\n   ${key}: ${firstParsedFile[key]}`;
+      return `${acc}\n    ${key}: ${firstParsedFile[key]}`;
     }
-    if (!Object.hasOwn(firstParsedFile, key)) {
-      return `${acc}\n + ${key}: ${secondParsedFile[key]}`;
+    if (!check1) {
+      return `${acc}\n  + ${key}: ${secondParsedFile[key]}`;
     }
     if (!Object.hasOwn(secondParsedFile, key)) {
-      return `${acc}\n - ${key}: ${firstParsedFile[key]}`;
+      return `${acc}\n  - ${key}: ${firstParsedFile[key]}`;
     }
-    if (Object.hasOwn(firstParsedFile, key) && Object.hasOwn(secondParsedFile, key) && firstParsedFile[key] !== secondParsedFile[key]) {
-      return `${acc}\n - ${key}: ${firstParsedFile[key]}\n + ${key}: ${secondParsedFile[key]}`;
+    if (check1 && check2 && firstParsedFile[key] !== secondParsedFile[key]) {
+      return `${acc}\n  - ${key}: ${firstParsedFile[key]}\n  + ${key}: ${secondParsedFile[key]}`;
     }
     return acc;
   }, '');
