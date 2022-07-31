@@ -22,7 +22,7 @@ jobs:
             https://github.com/paambaati/codeclimate-action
           uses: paambaati/codeclimate-action@v3
           env:
-            TESTS_SECRET: ${{ CODE_CLIMATE }}
+            CC_TEST_REPORTER_ID: ${{ secrets.TESTS_SECRET }}
           with:
             coverageCommand: make test-coverage
             debug: true
