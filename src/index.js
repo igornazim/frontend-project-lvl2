@@ -1,7 +1,6 @@
 import * as fs from 'fs';
 import _ from 'lodash';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import path from 'path';
 
 const fileParsing = (firstFilePath, secondFilePath) => {
   const getAbsFirstFilePath = path.resolve(process.cwd(), firstFilePath);
@@ -34,7 +33,5 @@ const genDiff = (firstFilePath, secondFilePath) => {
   }, '');
   return `{${diff}\n}`;
 };
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
+
 export default genDiff;
