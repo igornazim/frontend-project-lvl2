@@ -12,31 +12,29 @@ const fileParsing = (firstFilePath, secondFilePath) => {
   const secondParsedFile = JSON.parse(secondFileContent);
   return [firstParsedFile, secondParsedFile];
 };
-
 const genDiff = (firstFilePath, secondFilePath) => {
   const [firstParsedFile, secondParsedFile] = fileParsing(firstFilePath, secondFilePath);
   const keys1 = Object.keys(firstParsedFile);
   const keys2 = Object.keys(secondParsedFile);
-  let diff = '';
   const unionKeys = _.union(keys1, keys2).sort();
-  for (const key of unionKeys) {
+  const diff = unionKeys.reduce((acc, key) => {
     if (firstParsedFile[key] === secondParsedFile[key]) {
-      diff = `${diff}\n   ${key}: ${firstParsedFile[key]}`;
+      return `${acc}\n   ${key}: ${firstParsedFile[key]}`;
     }
     if (!Object.hasOwn(firstParsedFile, key)) {
-      diff = `${diff}\n + ${key}: ${secondParsedFile[key]}`;
+      return `${acc}\n + ${key}: ${secondParsedFile[key]}`;
     }
     if (!Object.hasOwn(secondParsedFile, key)) {
-      diff = `${diff}\n - ${key}: ${firstParsedFile[key]}`;
+      return `${acc}\n - ${key}: ${firstParsedFile[key]}`;
     }
     if (Object.hasOwn(firstParsedFile, key) && Object.hasOwn(secondParsedFile, key) && firstParsedFile[key] !== secondParsedFile[key]) {
-      diff = `${diff}\n - ${key}: ${firstParsedFile[key]}\n + ${key}: ${secondParsedFile[key]}`;
+      return `${acc}\n - ${key}: ${firstParsedFile[key]}\n + ${key}: ${secondParsedFile[key]}`;
     }
-  }
+    return acc;
+  }, '');
   return `{${diff}\n}`;
 };
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const getFixturePath = (filename) => path.join(__dirname, '..', '__fixtures__', filename);
-
 export default genDiff;
