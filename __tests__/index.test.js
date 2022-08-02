@@ -10,4 +10,5 @@ const expectedUnswer = fs.readFileSync(getFixturePath('result_plain.txt'), 'utf-
 
 test('genDiff', () => {
   expect(genDiff(getFixturePath('file1.json'), getFixturePath('file2.json'))).toEqual(expectedUnswer);
+  expect(genDiff(getFixturePath('file1.yml'), getFixturePath('file2.yml'))).toEqual(expectedUnswer);
 });
