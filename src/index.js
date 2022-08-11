@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import path from 'path';
 import * as fs from 'fs';
-import runParser from './parsers.js';
+import getParser from './parsers.js';
 
 const genDiff = (firstFilePath, secondFilePath) => {
   const getAbsFirstFilePath = path.resolve(process.cwd(), firstFilePath);
@@ -10,8 +10,8 @@ const genDiff = (firstFilePath, secondFilePath) => {
   const secondFileContent = fs.readFileSync(getAbsSecondFilePath, 'utf-8');
   const type1 = (path.extname(firstFilePath) === '.json') ? 'json' : 'yml';
   const type2 = (path.extname(secondFilePath) === '.json') ? 'json' : 'yml';
-  const firstParsedFile = runParser(firstFileContent, type1);
-  const secondParsedFile = runParser(secondFileContent, type2);
+  const firstParsedFile = getParser(firstFileContent, type1);
+  const secondParsedFile = getParser(secondFileContent, type2);
   const unionKeys = _.union(Object.keys(firstParsedFile), Object.keys(secondParsedFile)).sort();
   const diff = unionKeys.reduce((acc, key) => {
     const check1 = Object.hasOwn(firstParsedFile, key);
