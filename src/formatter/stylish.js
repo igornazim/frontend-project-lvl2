@@ -1,5 +1,19 @@
 import _ from 'lodash';
-import stringify from '../utils.js';
+
+const stringify = (value, replacer, spacesCount) => {
+  const iter = (val, depth) => {
+    if (!_.isObject(val)) {
+      return String(val);
+    }
+    const objectToArray = Object.entries(val);
+    const result = objectToArray.reduce((acc, elem) => {
+      const [key, entrie] = elem;
+      return `${acc}\n${replacer.repeat(spacesCount * depth)}${key}: ${iter(entrie, depth + 1)}`;
+    }, '');
+    return `{${result}\n${replacer.repeat(spacesCount * (depth - 1))}}`;
+  };
+  return iter(value, 2);
+};
 
 const stylish = (tree, replacer = ' ', spacesCount = 4) => {
   const iter = (node, depth) => {
@@ -7,38 +21,26 @@ const stylish = (tree, replacer = ' ', spacesCount = 4) => {
       return String(node);
     }
     const result = node.reduce((acc, elem) => {
-      if (elem.type === 'added' && _.isObject(elem.value)) {
-        return `${acc}\n${replacer.repeat(spacesCount + depth)}+ ${elem.key}: ${stringify(elem.value, replacer, spacesCount)}`;
+      if (elem.type === 'added') {
+        return `${acc}\n${replacer.repeat(spacesCount * depth - 2)}+ ${elem.key}: ${stringify(elem.value, replacer, spacesCount)}`;
       }
-      if (elem.type === 'added' && !_.isObject(elem.value)) {
-        return `${acc}\n${replacer.repeat(spacesCount + depth)}+ ${elem.key}: ${elem.value}`;
-      }
-      if (elem.type === 'deleted' && _.isObject(elem.value)) {
-        return `${acc}\n${replacer.repeat(spacesCount + depth)}- ${elem.key}: ${stringify(elem.value, replacer, spacesCount)}`;
-      }
-      if (elem.type === 'deleted' && !_.isObject(elem.value)) {
-        return `${acc}\n${replacer.repeat(spacesCount + depth)}- ${elem.key}: ${elem.value}`;
+      if (elem.type === 'deleted') {
+        return `${acc}\n${replacer.repeat(spacesCount * depth - 2)}- ${elem.key}: ${stringify(elem.value, replacer, spacesCount)}`;
       }
       if (elem.type === 'unchanged') {
-        return `${acc}\n${replacer.repeat(spacesCount + depth + 2)}${elem.key}: ${elem.value}`;
+        return `${acc}\n${replacer.repeat(spacesCount * depth)}${elem.key}: ${stringify(elem.value, replacer, spacesCount)}`;
       }
-      if (elem.type === 'changed' && _.isObject(elem.value1)) {
-        return `${acc}\n${replacer.repeat(spacesCount + depth)}- ${elem.key}: ${stringify(elem.value1, replacer, spacesCount)}\n${replacer.repeat(spacesCount + depth)}+ ${elem.key}: ${elem.value2}`;
-      }
-      if (elem.type === 'changed' && _.isObject(elem.value2)) {
-        return `${acc}\n${replacer.repeat(spacesCount + depth)}- ${elem.key}: ${elem.value1}\n${replacer.repeat(spacesCount + depth)}+ ${elem.key}: ${stringify(elem.value2, replacer, spacesCount)}`;
-      }
-      if (elem.type === 'changed' && !_.isObject(elem.value1) && !_.isObject(elem.value2)) {
-        return `${acc}\n${replacer.repeat(spacesCount + depth)}- ${elem.key}: ${elem.value1}\n${replacer.repeat(spacesCount + depth)}+ ${elem.key}: ${elem.value2}`;
+      if (elem.type === 'changed') {
+        return `${acc}\n${replacer.repeat(spacesCount * depth - 2)}- ${elem.key}: ${stringify(elem.value1, replacer, spacesCount)}\n${replacer.repeat(spacesCount * depth - 2)}+ ${elem.key}: ${stringify(elem.value2, replacer, spacesCount)}`;
       }
       if (elem.type === 'nested') {
-        return `${acc}\n${replacer.repeat(spacesCount + depth)}${elem.key}: ${iter(elem.children, depth + 2)}`;
+        return `${acc}\n${replacer.repeat(spacesCount * depth)}${elem.key}: ${iter(elem.children, depth + 1)}`;
       }
       return acc;
     }, '');
-    return `{${result}\n${replacer.repeat(spacesCount - 4 + depth)}}`;
+    return `{${result}\n${replacer.repeat(spacesCount * depth - 4)}}`;
   };
-  return iter(tree, 0);
+  return iter(tree, 1);
 };
 
 export default stylish;

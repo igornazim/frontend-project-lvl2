@@ -6,48 +6,28 @@ import stylish from './formatter/stylish.js';
 
 const getTree = (firstParsedFile, secondParsedFile) => {
   const keys = _.union(Object.keys(firstParsedFile), Object.keys(secondParsedFile)).sort();
-  const diff = keys.map((key) => {
-    const acc = {};
-    const hasObject1 = Object.hasOwn(firstParsedFile, key);
-    const hasObject2 = Object.hasOwn(secondParsedFile, key);
+  return keys.map((key) => {
+    const hasKeysObject1 = Object.hasOwn(firstParsedFile, key);
+    const hasKeysObject2 = Object.hasOwn(secondParsedFile, key);
     const isValueEqual = firstParsedFile[key] === secondParsedFile[key];
     const isObject1 = _.isObject(firstParsedFile[key]);
     const isObject2 = _.isObject(secondParsedFile[key]);
-    if (hasObject1 === hasObject2 && isObject1 && isObject2) {
-      acc.key = key;
-      acc.type = 'nested';
-      acc.children = getTree(firstParsedFile[key], secondParsedFile[key]);
+    if (hasKeysObject1 === hasKeysObject2 && isObject1 && isObject2) {
+      return { key, type: 'nested', children: getTree(firstParsedFile[key], secondParsedFile[key]) };
     }
-    if (hasObject1 === hasObject2 && isValueEqual) {
-      acc.key = key;
-      acc.type = 'unchanged';
-      acc.value = firstParsedFile[key];
+    if (hasKeysObject1 === hasKeysObject2 && !isValueEqual) {
+      return {
+        key, type: 'changed', value1: firstParsedFile[key], value2: secondParsedFile[key],
+      };
     }
-    if (hasObject1 === hasObject2 && !isValueEqual && !isObject1 && !isObject2) {
-      acc.key = key;
-      acc.type = 'changed';
-      acc.value1 = firstParsedFile[key];
-      acc.value2 = secondParsedFile[key];
+    if (!hasKeysObject1 && hasKeysObject2) {
+      return { key, type: 'added', value: secondParsedFile[key] };
     }
-    if (hasObject1 === hasObject2 && (isObject1 || isObject2) && (acc.type !== 'nested')) {
-      acc.key = key;
-      acc.type = 'changed';
-      acc.value1 = firstParsedFile[key];
-      acc.value2 = secondParsedFile[key];
+    if (hasKeysObject1 && !hasKeysObject2) {
+      return { key, type: 'deleted', value: firstParsedFile[key] };
     }
-    if (!hasObject1 && hasObject2) {
-      acc.key = key;
-      acc.type = 'added';
-      acc.value = secondParsedFile[key];
-    }
-    if (hasObject1 && !hasObject2) {
-      acc.key = key;
-      acc.type = 'deleted';
-      acc.value = firstParsedFile[key];
-    }
-    return acc;
+    return { key, type: 'unchanged', value: firstParsedFile[key] };
   });
-  return diff;
 };
 
 const genDiff = (firstFilePath, secondFilePath, format = stylish) => {
