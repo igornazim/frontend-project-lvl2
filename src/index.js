@@ -2,7 +2,8 @@ import _ from 'lodash';
 import path from 'path';
 import * as fs from 'fs';
 import getParser from './parsers.js';
-import stylish from './formatter/stylish.js';
+import stylish from './formatters/stylish.js';
+import plain from './formatters/plain.js';
 
 const getTree = (firstParsedFile, secondParsedFile) => {
   const keys = _.union(Object.keys(firstParsedFile), Object.keys(secondParsedFile)).sort();
@@ -30,7 +31,7 @@ const getTree = (firstParsedFile, secondParsedFile) => {
   });
 };
 
-const genDiff = (firstFilePath, secondFilePath, format = stylish) => {
+const genDiff = (firstFilePath, secondFilePath, format) => {
   const getAbsFirstFilePath = path.resolve(process.cwd(), firstFilePath);
   const firstFileContent = fs.readFileSync(getAbsFirstFilePath, 'utf-8');
   const getAbsSecondFilePath = path.resolve(process.cwd(), secondFilePath);
@@ -38,7 +39,7 @@ const genDiff = (firstFilePath, secondFilePath, format = stylish) => {
   const type1 = (path.extname(firstFilePath) === '.json') ? 'json' : 'yml';
   const type2 = (path.extname(secondFilePath) === '.json') ? 'json' : 'yml';
   const tree = getTree(getParser(firstFileContent, type1), getParser(secondFileContent, type2));
-  const formater = (format === 'stylish') ? stylish : stylish;
+  const formater = (format === 'stylish') ? stylish : plain;
   const result = formater(tree);
   return result;
 };
