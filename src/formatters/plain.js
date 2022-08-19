@@ -1,50 +1,44 @@
 import _ from 'lodash';
 
-const stringify = (data, dataType) => {
-  const iter = (node, type) => {
-    if (!_.isObject(node) && type === 'added') {
-      return `was added with value: ${node.value}`;
-    }
-    if (_.isObject(node) && type === 'added') {
-      return 'was added with value: [complex value]';
-    }
-    if (!_.isObject(node) && type === 'changed') {
-      return `${node.value}`;
-    }
-    if (_.isObject(node) && type === 'changed') {
-      return '[complex value]';
-    }
-    if (type === 'deleted') {
-      return 'was removed';
-    }
-    if (type === 'unchanged') {
-      return '';
-    }
-    return node.reduce((acc, elem) => `${acc}.${elem.key}${iter(elem, elem.type)}`, '');
-  };
-  return iter(data, dataType);
+const stringify = (data) => {
+  if (_.isObject(data)) {
+    return '[complex value]';
+  }
+  if (_.isString(data)) {
+    return `'${data}'`;
+  }
+  if (data === null) {
+    return `${null}`;
+  }
+  if (data === true || data === false) {
+    return `${data}`;
+  }
+  return '';
 };
 
 const plain = (tree) => {
-  const result = tree.reduce((acc, elem) => {
-    if (elem.type === 'added') {
-      return `Property ${elem.key} ${stringify(elem.value, elem.type)}`;
+  const iter = (node, path) => {
+    if (!_.isObject(node)) {
+      return String(node);
     }
-    if (elem.type === 'deleted') {
-      return `Property ${elem.key} was removed`;
-    }
-    if (elem.type === 'changed') {
-      return `Property ${elem.key} was updated. From ${stringify(elem.value1, elem.type)} to ${stringify(elem.value2, elem.type)}`;
-    }
-    if (elem.type === 'nested') {
-      return `Property ${elem.key}${stringify(elem.children, elem.type)}`;
-    }
-    if (elem.type === 'unchanged') {
-      return '';
-    }
-    return acc;
-  }, '');
-  return result;
+    const result = node.flatMap((elem) => {
+      if (elem.type === 'added') {
+        return `Property ${path}${elem.key}' was added with value: ${stringify(elem.value)}`;
+      }
+      if (elem.type === 'deleted') {
+        return `Property ${path}${elem.key}' was removed`;
+      }
+      if (elem.type === 'changed') {
+        return `Property ${path}${elem.key}' was updated. From ${stringify(elem.value1)} to ${stringify(elem.value2)}`;
+      }
+      if (elem.type === 'nested') {
+        return (iter(elem.children, `${path}${elem.key}.`));
+      }
+      return [];
+    });
+    return result.join('\n');
+  };
+  return iter(tree, "'");
 };
 
 export default plain;
