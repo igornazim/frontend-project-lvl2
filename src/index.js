@@ -15,7 +15,7 @@ const getFormat = (format) => {
     case 'json':
       return getJsonFormat;
     default:
-      throw new Error(`Unknown style format: '${format}'!`);
+      throw new Error('Unknown style format');
   }
 };
 
