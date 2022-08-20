@@ -20,7 +20,7 @@ const getFormat = (format) => {
 };
 
 const getTree = (firstParsedFile, secondParsedFile) => {
-  const keys = _.union(Object.keys(firstParsedFile), Object.keys(secondParsedFile)).sort();
+  const keys = _.sortBy(_.union(Object.keys(firstParsedFile), Object.keys(secondParsedFile)));
   return keys.map((key) => {
     const hasKeysObject1 = Object.hasOwn(firstParsedFile, key);
     const hasKeysObject2 = Object.hasOwn(secondParsedFile, key);
