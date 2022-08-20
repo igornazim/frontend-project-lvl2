@@ -4,6 +4,20 @@ import * as fs from 'fs';
 import getParser from './parsers.js';
 import stylish from './formatters/stylish.js';
 import plain from './formatters/plain.js';
+import getJsonFormat from './formatters/json.js';
+
+const getFormat = (format) => {
+  switch (format) {
+    case 'stylish':
+      return stylish;
+    case 'plain':
+      return plain;
+    case 'json':
+      return getJsonFormat;
+    default:
+      throw new Error(`Unknown style format: '${format}'!`);
+  }
+};
 
 const getTree = (firstParsedFile, secondParsedFile) => {
   const keys = _.union(Object.keys(firstParsedFile), Object.keys(secondParsedFile)).sort();
@@ -39,7 +53,7 @@ const genDiff = (firstFilePath, secondFilePath, format) => {
   const type1 = (path.extname(firstFilePath) === '.json') ? 'json' : 'yml';
   const type2 = (path.extname(secondFilePath) === '.json') ? 'json' : 'yml';
   const tree = getTree(getParser(firstFileContent, type1), getParser(secondFileContent, type2));
-  const formater = (format === 'stylish') ? stylish : plain;
+  const formater = getFormat(format);
   const result = formater(tree);
   return result;
 };
