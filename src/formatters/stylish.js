@@ -16,8 +16,6 @@ const stringify = (value, replacer, spacesCount) => {
 };
 
 const stylish = (tree, replacer = ' ', spacesCount = 4) => {
-  const kek = tree.map((elem) => JSON.stringify(elem));
-  console.log(kek);
   const iter = (node, depth) => {
     if (!_.isObject(node)) {
       return String(node);
