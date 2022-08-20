@@ -7,6 +7,9 @@ const stringify = (data) => {
   if (_.isString(data)) {
     return `'${data}'`;
   }
+  if (_.isNumber(data)) {
+    return data;
+  }
   if (data === null) {
     return `${null}`;
   }
