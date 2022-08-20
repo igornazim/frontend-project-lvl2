@@ -45,7 +45,7 @@ const getTree = (firstParsedFile, secondParsedFile) => {
   });
 };
 
-const genDiff = (firstFilePath, secondFilePath, format) => {
+const genDiff = (firstFilePath, secondFilePath, format = 'stylish') => {
   const getAbsFirstFilePath = path.resolve(process.cwd(), firstFilePath);
   const firstFileContent = fs.readFileSync(getAbsFirstFilePath, 'utf-8');
   const getAbsSecondFilePath = path.resolve(process.cwd(), secondFilePath);
