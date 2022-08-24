@@ -1,45 +1,42 @@
 import _ from 'lodash';
 
-const indent = (depth, spacesCount = 4) => ' '.repeat(Math.max(depth * spacesCount - 2, 0));
+const indent = (depth, spacesCount = 4) => ' '.repeat(depth * spacesCount - 2);
 
-const stringify = (value, spacesCount) => {
-  const iter = (val, depth) => {
-    if (!_.isObject(val)) {
-      return String(val);
-    }
-    const objectToArray = Object.entries(val);
-    const result = objectToArray.reduce((acc, elem) => {
-      const [key, entrie] = elem;
-      return `${acc}\n${indent(depth + spacesCount)}  ${key}: ${iter(entrie, depth + 1)}`;
-    }, '');
-    return `{${result}\n${indent(depth + spacesCount - 1)}  }`;
-  };
-  return iter(value, 0);
+const stringify = (val, depth) => {
+  if (!_.isObject(val)) {
+    return String(val);
+  }
+  const objectToArray = Object.entries(val);
+  const result = objectToArray.map((elem) => {
+    const [key, entrie] = elem;
+    return `${indent(depth)}  ${key}: ${stringify(entrie, depth + 1)}`;
+  });
+  return `{\n${result.join('\n')}\n${indent(depth - 1)}  }`;
 };
 
 const stylish = (tree) => {
   const iter = (node, depth) => {
-    if (!_.isObject(node)) {
-      return String(node);
-    }
-    const result = node.map((elem) => {
+    const result = node.flatMap((elem) => {
       if (elem.type === 'added') {
-        return `\n${indent(depth)}+ ${elem.key}: ${stringify(elem.value, depth + 1)}`;
+        return `${indent(depth)}+ ${elem.key}: ${stringify(elem.value, depth + 1)}`;
       }
       if (elem.type === 'deleted') {
-        return `\n${indent(depth)}- ${elem.key}: ${stringify(elem.value, depth + 1)}`;
+        return `${indent(depth)}- ${elem.key}: ${stringify(elem.value, depth + 1)}`;
       }
       if (elem.type === 'changed') {
-        return `\n${indent(depth)}- ${elem.key}: ${stringify(elem.value1, depth + 1)}\n${indent(depth)}+ ${elem.key}: ${stringify(elem.value2, depth + 1)}`;
+        return [
+          `${indent(depth)}- ${elem.key}: ${stringify(elem.value1, depth + 1)}`,
+          `${indent(depth)}+ ${elem.key}: ${stringify(elem.value2, depth + 1)}`,
+        ];
       }
       if (elem.type === 'nested') {
-        return `\n${indent(depth)}  ${elem.key}: ${iter(elem.children, depth + 1)}`;
+        return `${indent(depth)}  ${elem.key}: {\n${iter(elem.children, depth + 1).join('\n')}\n${indent(depth)}  }`;
       }
-      return `\n${indent(depth)}  ${elem.key}: ${stringify(elem.value, depth + 1)}`;
+      return `${indent(depth)}  ${elem.key}: ${stringify(elem.value, depth + 1)}`;
     });
-    return `{${result.join('')}\n${indent(depth - 1)}}`;
+    return result;
   };
-  return iter(tree, 1);
+  return `{\n${iter(tree, 1).join('\n')}\n}`;
 };
 
 export default stylish;
