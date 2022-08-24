@@ -1,6 +1,3 @@
-const getJsonFormat = (tree) => {
-  const result = tree.map((elem) => JSON.stringify(elem));
-  return `[${result}]`;
-};
+const getJsonFormat = (tree) => JSON.stringify(tree);
 
 export default getJsonFormat;
