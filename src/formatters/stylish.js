@@ -10,11 +10,11 @@ const stringify = (value, spacesCount) => {
     const objectToArray = Object.entries(val);
     const result = objectToArray.reduce((acc, elem) => {
       const [key, entrie] = elem;
-      return `${acc}\n${indent(depth * spacesCount)}  ${key}: ${iter(entrie, depth + 1)}`;
+      return `${acc}\n${indent(depth + spacesCount)}  ${key}: ${iter(entrie, depth + 1)}`;
     }, '');
-    return `{${result}\n${indent(depth * spacesCount - 2)}}`;
+    return `{${result}\n${indent(depth + spacesCount - 1)}  }`;
   };
-  return iter(value, 1);
+  return iter(value, 0);
 };
 
 const stylish = (tree) => {
@@ -37,7 +37,7 @@ const stylish = (tree) => {
       }
       return `\n${indent(depth)}  ${elem.key}: ${stringify(elem.value, depth + 1)}`;
     });
-    return `{${result.join('')}\n${indent(depth)}}`;
+    return `{${result.join('')}\n${indent(depth - 1)}}`;
   };
   return iter(tree, 1);
 };
