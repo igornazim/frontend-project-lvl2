@@ -1,6 +1,5 @@
 import stylish from './stylish.js';
 import plain from './plain.js';
-import getJsonFormat from './json.js';
 
 const getFormat = (format, data) => {
   switch (format) {
@@ -9,7 +8,7 @@ const getFormat = (format, data) => {
     case 'plain':
       return plain(data);
     case 'json':
-      return getJsonFormat(data);
+      return JSON.stringify(data);
     default:
       throw new Error('Unknown style format');
   }
