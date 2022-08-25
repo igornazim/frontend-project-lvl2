@@ -11,25 +11,25 @@
 This package includes CLI app which compares two configuration files and shows a difference
 
 ## Setup
-> make install
+``make install``
 
 ## Run tests
-> make test
+``make test``
 
 ## Usage
 To see the help, use the h option.
-> blockquote gendiff -h
+``blockquote gendiff -h``
 
 The application supports three output formats:
 - indented tree format
 - plain format
 - json format
 
-> gendiff __fixtures__/file1.json __fixtures__/file2.json
+``gendiff __fixtures__/file1.json __fixtures__/file2.json``
 [![asciicast](https://asciinema.org/a/T14Cdb4Ndcgyl7jpeP3DNW2aX.svg)](https://asciinema.org/a/T14Cdb4Ndcgyl7jpeP3DNW2aX)
 
-> gendiff -f plain __fixtures__/file1.yml __fixtures__/file2.yml
+``gendiff -f plain __fixtures__/file1.yml __fixtures__/file2.yml``
 [![asciicast](https://asciinema.org/a/1NXXOkdl7KKfRkAqm4iyMkJiQ.svg)](https://asciinema.org/a/1NXXOkdl7KKfRkAqm4iyMkJiQ)
 
-> gendiff -f json __fixtures__/file1.yml __fixtures__/file2.yml
+``gendiff -f json __fixtures__/file1.yml __fixtures__/file2.yml``
 [![asciicast](https://asciinema.org/a/rAxn2GNbd5T3BKZHvuEzT8TDs.svg)](https://asciinema.org/a/rAxn2GNbd5T3BKZHvuEzT8TDs)
