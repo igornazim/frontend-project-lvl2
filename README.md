@@ -1,3 +1,6 @@
+
+# Gendiff
+
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/igornazim/frontend-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/igornazim/frontend-project-lvl2/actions)
 
@@ -7,7 +10,6 @@
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/d739126dfd8e1dc84ae1/test_coverage)](https://codeclimate.com/github/igornazim/frontend-project-lvl2/test_coverage)
 
-# Gendiff
 This package includes CLI app which compares two configuration files and shows a difference
 
 ## Setup
