@@ -8,8 +8,8 @@ const stringify = (val, depth) => {
   }
   const objectToArray = Object.entries(val);
   const result = objectToArray.map((elem) => {
-    const [key, entrie] = elem;
-    return `${indent(depth)}  ${key}: ${stringify(entrie, depth + 1)}`;
+    const [key, entry] = elem;
+    return `${indent(depth)}  ${key}: ${stringify(entry, depth + 1)}`;
   });
   return `{\n${result.join('\n')}\n${indent(depth - 1)}  }`;
 };
